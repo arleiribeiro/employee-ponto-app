@@ -15,7 +15,7 @@ async function request<T>(path: string, options: RequestInit = {}, token?: strin
       ...options,
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { "X-Employee-Token": token } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });
