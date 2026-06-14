@@ -24,7 +24,17 @@ async function request<T>(path: string, options: RequestInit = {}, token?: strin
   }
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data: any = null;
+  const contentType = response.headers.get("content-type") || "";
+
+  if (text && contentType.includes("application/json")) {
+    data = JSON.parse(text);
+  } else if (text) {
+    const preview = text.replace(/\s+/g, " ").slice(0, 120);
+    throw new Error(
+      `A URL ${url} não respondeu JSON. Verifique VITE_API_BASE_URL e se o backend atualizado está publicado. Resposta: ${preview}`,
+    );
+  }
 
   if (!response.ok) {
     throw new Error(data?.message || `Erro ${response.status}`);
